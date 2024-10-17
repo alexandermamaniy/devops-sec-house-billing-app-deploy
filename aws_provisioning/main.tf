@@ -12,8 +12,6 @@ provider "aws" {
   profile                  = "NCI"
 }
 
-
-
 # Get availability zones (no local zones)
 data "aws_availability_zones" "nolocal" {
   filter {
@@ -21,7 +19,6 @@ data "aws_availability_zones" "nolocal" {
     values = ["opt-in-not-required"]
   }
 }
-
 
 resource "aws_key_pair" "mtc_auth" {
   key_name   = "mtckey"
@@ -182,16 +179,6 @@ resource "aws_security_group" "house_billing_rds_security_group" {
 }
 
 
-# # Security Group for RDS
-# resource "aws_security_group" "gluon-sg-rds" {
-#   name        = "gluon-sg-rds"
-#   description = "Security Group for RDS"
-#   vpc_id      = aws_vpc.house_billing_vpc.id
-#   tags = {
-#     Name = "gluon-sg-rds"
-#   }
-# }
-
 # ############################### SECURITY GROUPS RULES ###############################
 
 # NAT Instance Security group rule to allow SSH from remote ip
@@ -223,26 +210,6 @@ resource "aws_security_group_rule" "house_billing_outbound_nat_instance" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.house_billing_nat_security_group.id
 }
-
-# # Web Service (Django rest API) security group rule to allow all traffic from public subnet 1
-# resource "aws_security_group_rule" "house_billing_web_rest_api_service_inbound_private_subnet_1" {
-#   type              = "ingress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   cidr_blocks       = [var.public_subnet_cidr_blocks[0]]
-#   security_group_id = aws_security_group.house_billing_web_rest_api_service_security_group.id
-# }
-#
-# # Web Service (Django rest API) security group rule to allow all traffic from public subnet 2
-# resource "aws_security_group_rule" "house_billing_web_rest_api_service_inbound_private_subnet_2" {
-#   type              = "ingress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   cidr_blocks       = [var.public_subnet_cidr_blocks[1]]
-#   security_group_id = aws_security_group.house_billing_web_rest_api_service_security_group.id
-# }
 
 # Web Service (Django rest API) security group rule to allow all traffic from public subnet 1 and 2
 resource "aws_security_group_rule" "house_billing_web_rest_api_service_inbound_private_subnet_1_and_2" {
@@ -293,48 +260,6 @@ resource "aws_security_group_rule" "house_billing_outbound_nginx_proxy_instance_
   security_group_id = aws_security_group.house_billing_nginx_proxy_security_group.id
 }
 
-# # RDS security group rule to allow all traffic from private subnet 1
-# resource "aws_security_group_rule" "house_billing_rds_inbound_private_subnet_1" {
-#   type              = "ingress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   cidr_blocks       = [var.cidr_blocks[1]]
-#   security_group_id = aws_security_group.house_billing_rds_security_group.id
-# }
-#
-# # RDS security group rule to allow all traffic from private subnet 2
-# resource "aws_security_group_rule" "house_billing_rds_inbound_private_subnet_2" {
-#   type              = "ingress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   cidr_blocks       = [var.cidr_blocks[2]]
-#   security_group_id = aws_security_group.house_billing_rds_security_group.id
-# }
-#
-
-
-# # RDS security group rule to allow MYSQL traffic by port 3306 from subnet 1
-# resource "aws_security_group_rule" "house_billing_rds_mysql_inbound_from_private_subnet_1" {
-#   type              = "ingress"
-#   from_port         = 3306
-#   to_port           = 3306
-#   protocol          = "tcp"
-#   cidr_blocks       = [var.private_subnet_cidr_blocks[0]]
-#   security_group_id = aws_security_group.house_billing_rds_security_group.id
-# }
-#
-# # RDS security group rule to allow all traffic from private subnet 2
-# resource "aws_security_group_rule" "house_billing_rds_mysql_inbound_from_private_subnet_2" {
-#   type              = "ingress"
-#   from_port         = 3306
-#   to_port           = 3306
-#   protocol          = "tcp"
-#   cidr_blocks       = [var.private_subnet_cidr_blocks[1]]
-#   security_group_id = aws_security_group.house_billing_rds_security_group.id
-# }
-
 # RDS security group rule to allow MYSQL traffic by port 3306 from subnet 1 and 2
 resource "aws_security_group_rule" "house_billing_rds_mysql_inbound_from_private_subnet_1_and_2" {
   type              = "ingress"
@@ -344,27 +269,6 @@ resource "aws_security_group_rule" "house_billing_rds_mysql_inbound_from_private
   cidr_blocks       = [for subnet in var.private_subnet_cidr_blocks : subnet]
   security_group_id = aws_security_group.house_billing_rds_security_group.id
 }
-
-
-# # RDS instance security group rule to allow outbound traffic to subnet 1
-# resource "aws_security_group_rule" "house_billing_outbound_rds_instance_to_subnet_1" {
-#   type              = "egress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   cidr_blocks       = [var.private_subnet_cidr_blocks[0]]
-#   security_group_id = aws_security_group.house_billing_rds_security_group.id
-# }
-#
-# # RDS instance security group rule to allow outbound traffic to subnet 2
-# resource "aws_security_group_rule" "house_billing_outbound_rds_instance_to_subnet_2" {
-#   type              = "egress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   cidr_blocks       = [var.private_subnet_cidr_blocks[1]]
-#   security_group_id = aws_security_group.house_billing_rds_security_group.id
-# }
 
 # RDS instance security group rule to allow outbound traffic to subnet 1
 resource "aws_security_group_rule" "house_billing_outbound_rds_instance_to_subnet_1_and_2" {
@@ -411,6 +315,14 @@ resource "aws_instance" "house_billing_nat_instance" {
   tags = {
     Name = "house_billing_nat_instance"
   }
+  provisioner "local-exec" {
+    command = templatefile("linux-ssh-config.tpl", {
+      hostname     = self.public_ip,
+      user         = "ec2-user ",
+      identityfile = "~/.ssh/mctkey"
+    })
+    interpreter = var.host_os == "linux" ? ["/bin/bash", "-c"] : ["Powershell", "-Command"]
+  }
 }
 
 # Web REST API serivce Instance
@@ -442,7 +354,8 @@ resource "aws_instance" "house_billing_nginx_proxy_instance" {
   vpc_security_group_ids = [aws_security_group.house_billing_nginx_proxy_security_group.id]
   subnet_id              = aws_subnet.house_billing_public_subnet_1.id
   # user_data              = file("userdata.tpl")
-
+  associate_public_ip_address = true
+  source_dest_check           = false
   root_block_device {
     volume_size = 20
     volume_type = "gp2"
@@ -451,6 +364,15 @@ resource "aws_instance" "house_billing_nginx_proxy_instance" {
 
   tags = {
     Name = "house_billing_nginx_proxy_instance"
+  }
+
+  provisioner "local-exec" {
+    command = templatefile("linux-ssh-config.tpl", {
+      hostname     = self.public_ip,
+      user         = "ubuntu",
+      identityfile = "~/.ssh/mctkey"
+    })
+    interpreter = var.host_os == "linux" ? ["/bin/bash", "-c"] : ["Powershell", "-Command"]
   }
 }
 
@@ -471,125 +393,3 @@ resource "aws_db_instance" "house-billing-db-instance" {
   db_name                = var.setting.database.db_name
   skip_final_snapshot    = var.setting.database.skip_final_snapshot
 }
-
-
-#
-#
-# resource "aws_instance" "frontend" {
-#   instance_type = "t2.micro"
-#   ami           = data.aws_ami.server_ami.id
-#   key_name      = aws_key_pair.mtc_auth.id
-#   # create a new securit group for this
-#   vpc_security_group_ids      = [aws_security_group.house_billing_nat_security_group.id]
-#   subnet_id                   = aws_subnet.house_billing_public_subnet_1.id
-#   user_data                   = file("userdata.tpl")
-#   associate_public_ip_address = true
-#   source_dest_check           = false
-#
-#   root_block_device {
-#     volume_size = 20
-#     volume_type = "gp2"
-#     encrypted   = true
-#   }
-#
-#   tags = {
-#     Name = "gluon-nginx"
-#   }
-# }
-
-
-# create the subnet group for the rds instance
-# resource "aws_db_subnet_group" "database_subnet_group" {
-#   name        = "database-subnets"
-#   subnet_ids  = [aws_subnet.house_billing_private_subnet_1.id, aws_subnet.house_billing_private_subnet_2.id]
-#   description = "subnets for database instace"
-#
-#   tags = {
-#     Name = "database-subnets"
-#   }
-# }
-
-# # create security group for the web server
-# resource "aws_security_group" "webserver_security_group" {
-#   name        = "webserver security group"
-#   description = "enable http access on port 80"
-#   vpc_id      = aws_vpc.gluon-vpc.id
-#
-#   ingress {
-#     description = "http access"
-#     from_port   = 80
-#     to_port     = 80
-#     protocol    = "tpc"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-#
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = -1
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-#
-#   tags = {
-#     Name = "webserver security group"
-#   }
-# }
-#
-# # create security group for the database
-# resource "aws_security_group" "database_security_group" {
-#   name        = "database security group"
-#   description = "enable mysql/aurora access on port 3306"
-#   vpc_id      = aws_vpc.gluon-vpc.id
-#
-#   ingress {
-#     description     = "mysql/aurora access"
-#     from_port       = 3306
-#     to_port         = 3306
-#     protocol        = "tcp"
-#     security_groups = [aws_security_group.webserver_security_group.id]
-#   }
-#
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = -1
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-#
-#   tags = {
-#     Name = "database security group"
-#   }
-# }
-
-# use data source to get all avalablility zones in region
-# data "aws_availability_zones" "available_zones" {}
-
-# # create the rds instance
-# resource "aws_db_instance" "db_instance" {
-#   engine                 = "mysql"
-#   # engine_version         = "8.0"
-#   multi_az               = false
-#   identifier             = "dev-rds-instance"
-#   username               = "marenestasloca"
-#   password               = "marenestasloca1234"
-#   instance_class         = "db.t2.micro"
-#   allocated_storage      = 200
-#   db_subnet_group_name   = aws_db_subnet_group.database_subnet_group.name
-#   # vpc_security_group_ids = [aws_security_group.house_billing_web_service_security_group]
-#   availability_zone      = data.aws_availability_zones.available_zones.names[0]
-#   db_name                = "applicationdb"
-#   skip_final_snapshot    = true
-# }
-#
-# # Route table entry to forward traffic to NAT instance
-# resource "aws_route" "outbound-nat-route" {
-#   route_table_id         = aws_route_table.gluon-rt-private1.id
-#   destination_cidr_block = "0.0.0.0/0"
-#   network_interface_id   = aws_instance.house_billing_nat_instance.primary_network_interface_id
-# }
-
-
-# Next steps
-# - Create RDS security group
-# - no exponer RDS a NAT
-# - Fix RDS paramentres
