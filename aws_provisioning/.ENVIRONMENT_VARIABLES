@@ -1,0 +1,9 @@
+
+house_billing_web_rest_api_instance_PUBLIC_IP=
+house_billing_web_rest_api_instance_PRIVATE_IP=10.0.1.49
+
+house_billing_nat_instance_PUBLIC_IP=44.213.101.193
+house_billing_nat_instance_PRIVATE_IP=10.0.3.111
+
+house_billing_nginx_proxy_instance_PUBLIC_IP=52.3.227.177
+house_billing_nginx_proxy_instance_PRIVATE_IP=10.0.3.188

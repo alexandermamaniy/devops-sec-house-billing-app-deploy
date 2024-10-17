@@ -323,6 +323,15 @@ resource "aws_instance" "house_billing_nat_instance" {
     })
     interpreter = var.host_os == "linux" ? ["/bin/bash", "-c"] : ["Powershell", "-Command"]
   }
+
+  provisioner "local-exec" {
+    command = templatefile("environment_variables.tpl", {
+      instance   = "house_billing_nat_instance",
+      public_ip  = self.public_ip,
+      private_ip = self.private_ip,
+    })
+    interpreter = var.host_os == "linux" ? ["/bin/bash", "-c"] : ["Powershell", "-Command"]
+  }
 }
 
 # Web REST API serivce Instance
@@ -332,7 +341,7 @@ resource "aws_instance" "house_billing_web_rest_api_instance" {
   key_name               = aws_key_pair.mtc_auth.id
   vpc_security_group_ids = [aws_security_group.house_billing_web_rest_api_service_security_group.id]
   subnet_id              = aws_subnet.house_billing_private_subnet_1.id
-  # user_data              = file("userdata.tpl")
+  user_data              = file("userdata.tpl")
 
   root_block_device {
     volume_size = 20
@@ -342,6 +351,14 @@ resource "aws_instance" "house_billing_web_rest_api_instance" {
 
   tags = {
     Name = "house_billing_web_rest_api_instance"
+  }
+  provisioner "local-exec" {
+    command = templatefile("environment_variables.tpl", {
+      instance   = "house_billing_web_rest_api_instance",
+      public_ip  = self.public_ip,
+      private_ip = self.private_ip,
+    })
+    interpreter = var.host_os == "linux" ? ["/bin/bash", "-c"] : ["Powershell", "-Command"]
   }
 }
 
@@ -353,7 +370,7 @@ resource "aws_instance" "house_billing_nginx_proxy_instance" {
   key_name               = aws_key_pair.mtc_auth.id
   vpc_security_group_ids = [aws_security_group.house_billing_nginx_proxy_security_group.id]
   subnet_id              = aws_subnet.house_billing_public_subnet_1.id
-  # user_data              = file("userdata.tpl")
+  user_data              = file("userdata.tpl")
   associate_public_ip_address = true
   source_dest_check           = false
   root_block_device {
@@ -371,6 +388,15 @@ resource "aws_instance" "house_billing_nginx_proxy_instance" {
       hostname     = self.public_ip,
       user         = "ubuntu",
       identityfile = "~/.ssh/mctkey"
+    })
+    interpreter = var.host_os == "linux" ? ["/bin/bash", "-c"] : ["Powershell", "-Command"]
+  }
+
+  provisioner "local-exec" {
+    command = templatefile("environment_variables.tpl", {
+      instance   = "house_billing_nginx_proxy_instance",
+      public_ip  = self.public_ip,
+      private_ip = self.private_ip,
     })
     interpreter = var.host_os == "linux" ? ["/bin/bash", "-c"] : ["Powershell", "-Command"]
   }
