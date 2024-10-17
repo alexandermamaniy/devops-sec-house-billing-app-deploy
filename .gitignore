@@ -1,8 +1,9 @@
 .idea
 *.terraform/*
 
-aws_provisioning/.ENVIRONMENT_VARIABLES
+./aws_provisioning/.ENVIRONMENT_VARIABLES.env
 
+*.env
 # Local .terraform directories
 **/.terraform/*
 
