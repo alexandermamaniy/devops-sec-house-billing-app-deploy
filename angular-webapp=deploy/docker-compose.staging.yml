@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: x23329823/house_billing_nginx_service:latest
+    command: >
+      sh -c "
+          nginx -g 'daemon off;'"
+    restart: always
+    ports:
+      - "80:80"
