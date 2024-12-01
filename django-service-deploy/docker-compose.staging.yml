@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  web:
+    image: x23329823/house_billing_web_service:latest
+    command: >
+      sh -c "
+          python -m gunicorn --workers 3 --bind 0.0.0.0:8000 --timeout 120  billbuddy.wsgi:application"
+    restart: always
+    env_file: .env.staging
+    ports:
+      - "8000:8000"
