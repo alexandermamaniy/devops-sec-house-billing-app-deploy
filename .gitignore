@@ -3,6 +3,10 @@
 
 ./aws_provisioning/.ENVIRONMENT_VARIABLES.env
 
+.env.*
+
+certbot/
+
 *.env
 # Local .terraform directories
 **/.terraform/*
